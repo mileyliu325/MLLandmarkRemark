@@ -35,13 +35,19 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Map" id="LCs-H2-nuL">
-                        <barButtonItem key="rightBarButtonItem" title="sarch" id="OfN-Qa-yuX">
+                        <barButtonItem key="leftBarButtonItem" title="search" id="LLX-o9-sjZ">
                             <connections>
-                                <segue destination="HQk-ra-wYo" kind="presentation" identifier="toSearch" id="hiG-jB-bLr"/>
+                                <segue destination="HQk-ra-wYo" kind="presentation" identifier="toSearch" id="som-BM-KEj"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="logout" id="OfN-Qa-yuX">
+                            <connections>
+                                <action selector="logout:" destination="BYZ-38-t0r" id="D7p-DL-Kfn"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="logoutButton" destination="OfN-Qa-yuX" id="PLl-JH-LVL"/>
                         <outlet property="mapView" destination="1lV-ai-5I1" id="3FW-VU-TtV"/>
                     </connections>
                 </viewController>
@@ -91,7 +97,9 @@
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="j77-SE-98D">
                                 <rect key="frame" x="30" y="39" width="39" height="30"/>
-                                <state key="normal" title="Close"/>
+                                <state key="normal" title="Close">
+                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
                                 <connections>
                                     <action selector="closePage:" destination="CqN-eg-dL6" eventType="touchUpInside" id="IJv-9a-jbH"/>
                                 </connections>

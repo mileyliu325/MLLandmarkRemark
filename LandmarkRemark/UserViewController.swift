@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import KumulosSDK
 
 class UserViewController: UIViewController {
 
@@ -43,25 +44,46 @@ class UserViewController: UIViewController {
     
     func checkUserExist(name:String) {
         
-        //if sucess
-       self.register(name: loginNameTF.text!, password: loginPswTF.text!)
-        
-        self.login(name: loginNameTF.text!, password: loginPswTF.text!)
-        
-       
+        Kumulos.call("checkUserExist", parameters: ["user_name":name as AnyObject])
+            .success { (response, operation) in
+                if let array = response.payload as? Array<AnyObject> {
+                print("it's an array of objects, counts:\(array.count)")
+                self.register(name: self.loginNameTF.text!, password: self.loginPswTF.text!)
+            }else {
+                print("this account have been registered,please use another name")}
+                
+            }.failure { (error, operation) in
+                print("check existing error:\(error)")
+        }
     }
-    
     
     func register(name:String,password:String){
         
-        
+        Kumulos.call("reigster", parameters: ["user_name":name as AnyObject,"password":name as AnyObject]).success { (response, operation) in
+            print("register sucess:\(response.payload)")
+           
+            self.login(name:name, password: password)
+           
+            }.failure { (error, operation) in
+                print("registereroro:\(error)")
+        }
     }
+    
     func login(name:String,password:String) {
         
-        //login
+        Kumulos.call("login", parameters: ["user_name":name as AnyObject,"password":name as AnyObject]).success { (response, operation) in
+            print("login sucess:\(response.payload)")
+            
+            self.standard.set(name, forKey: "username")
+            self.standard.set(password, forKey: "password")
+            
+            self.dismiss(animated: true, completion: nil)
+            
+            }.failure { (error, operation) in
+                print("login error:\(error)")
+        }
         
-        standard.set(loginNameTF.text!, forKey: "username")
-        standard.set(loginPswTF.text!, forKey: "password")
+       
     }
     
     

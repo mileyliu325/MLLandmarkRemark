@@ -19,6 +19,8 @@ class MapViewController: UIViewController{
     var newAnnotationView : MKPinAnnotationView!
     var standard = UserDefaults.standard
     
+    @IBOutlet weak var logoutButton: UIBarButtonItem!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupMap()
@@ -26,8 +28,22 @@ class MapViewController: UIViewController{
         let longTap = UILongPressGestureRecognizer.init(target: self, action: #selector(handleTap(sender:)))
         
         self.mapView.addGestureRecognizer(longTap)
+        if let name = standard.string(forKey: "username") {
+            
+            logoutButton.isEnabled = true
+        }else{
+           
+            logoutButton.isEnabled = false
+        }
     }
     
+    @IBAction func logout(_ sender: Any) {
+        
+        //todo alert
+        standard.removeObject(forKey: "username")
+        standard.removeObject(forKey: "password")
+        
+    }
     @objc func handleTap(sender: UILongPressGestureRecognizer) {
         
          let point = sender.location(in: mapView)
@@ -70,10 +86,9 @@ class MapViewController: UIViewController{
         }
        
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak alert] (_) in
-            let title = "Mileyliu"
+            let title = self.standard.string(forKey: "username")!
             let note = alert?.textFields![0]
             
-           
             self.addNewAnnotation(title: title, note: note?.text ?? "", location: coordinate)
            
             //todo fetch server
