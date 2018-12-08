@@ -17,6 +17,7 @@ class MapViewController: UIViewController{
     var userLocation = CLLocation()
     var newAnnotation : MKPointAnnotation!
     var newAnnotationView : MKPinAnnotationView!
+    var standard = UserDefaults.standard
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,14 +28,25 @@ class MapViewController: UIViewController{
         self.mapView.addGestureRecognizer(longTap)
     }
     
-    
     @objc func handleTap(sender: UILongPressGestureRecognizer) {
         
          let point = sender.location(in: mapView)
          let coordinate = mapView.convert(point, toCoordinateFrom: mapView)
-         showAlert(coordinate: coordinate)
-    
+        
+        if let name = standard.string(forKey: "username"){
+           
+            showAlert(coordinate: coordinate)
+            
+        }else {
+            
+            var controller: UserViewController
+            
+            controller = self.storyboard?.instantiateViewController(withIdentifier: "UserViewController") as! UserViewController
+            
+            present(controller, animated: true, completion: nil)
+        }
     }
+    
     func setupMap(){
         
         locationManager.delegate = self
@@ -59,12 +71,14 @@ class MapViewController: UIViewController{
        
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak alert] (_) in
             let title = "Mileyliu"
-            let note = alert?.textFields![0] // Force unwrapping because we know it exists.
+            let note = alert?.textFields![0]
             
-            //todo vailidate
-            
+           
             self.addNewAnnotation(title: title, note: note?.text ?? "", location: coordinate)
+           
             //todo fetch server
+            
+            
         }))
         
         alert.addAction(UIAlertAction(title:"Cancel",style:.cancel))
@@ -91,7 +105,7 @@ extension MapViewController:CLLocationManagerDelegate{
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         let location = locations.last! as CLLocation
-        self.userLocation = location        
+        self.userLocation = location
         self.mapView.showsUserLocation = true
 
         let centerCoordinate = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude:location.coordinate.longitude)

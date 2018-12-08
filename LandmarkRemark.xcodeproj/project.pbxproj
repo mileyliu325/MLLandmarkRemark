@@ -10,6 +10,7 @@
 		162F353621BA216E0001EAB0 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 162F353521BA216E0001EAB0 /* CoreLocation.framework */; };
 		162F353821BA21B30001EAB0 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162F353721BA21B30001EAB0 /* MapViewController.swift */; };
 		162F353A21BA23620001EAB0 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 162F353921BA23620001EAB0 /* MapKit.framework */; };
+		162F357E21BC08F60001EAB0 /* UserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162F357D21BC08F60001EAB0 /* UserViewController.swift */; };
 		6BDDDE2021B9F0C0009A4B84 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BDDDE1F21B9F0C0009A4B84 /* AppDelegate.swift */; };
 		6BDDDE2521B9F0C0009A4B84 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6BDDDE2321B9F0C0009A4B84 /* Main.storyboard */; };
 		6BDDDE2721B9F0C0009A4B84 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6BDDDE2621B9F0C0009A4B84 /* Assets.xcassets */; };
@@ -39,6 +40,7 @@
 		162F353521BA216E0001EAB0 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		162F353721BA21B30001EAB0 /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		162F353921BA23620001EAB0 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		162F357D21BC08F60001EAB0 /* UserViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserViewController.swift; sourceTree = "<group>"; };
 		6BDDDE1C21B9F0C0009A4B84 /* LandmarkRemark.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LandmarkRemark.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6BDDDE1F21B9F0C0009A4B84 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6BDDDE2421B9F0C0009A4B84 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -116,6 +118,7 @@
 				6BDDDE1F21B9F0C0009A4B84 /* AppDelegate.swift */,
 				162F353721BA21B30001EAB0 /* MapViewController.swift */,
 				6BDDDE2321B9F0C0009A4B84 /* Main.storyboard */,
+				162F357D21BC08F60001EAB0 /* UserViewController.swift */,
 				6BDDDE2621B9F0C0009A4B84 /* Assets.xcassets */,
 				6BDDDE2821B9F0C0009A4B84 /* LaunchScreen.storyboard */,
 				6BDDDE2B21B9F0C0009A4B84 /* Info.plist */,
@@ -276,6 +279,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				162F353821BA21B30001EAB0 /* MapViewController.swift in Sources */,
+				162F357E21BC08F60001EAB0 /* UserViewController.swift in Sources */,
 				6BDDDE2021B9F0C0009A4B84 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
