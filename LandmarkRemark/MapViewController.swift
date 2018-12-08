@@ -9,6 +9,7 @@
 import UIKit
 import CoreLocation
 import MapKit
+import KumulosSDK
 
 class MapViewController: UIViewController{
 
@@ -49,7 +50,7 @@ class MapViewController: UIViewController{
          let point = sender.location(in: mapView)
          let coordinate = mapView.convert(point, toCoordinateFrom: mapView)
         
-        if let name = standard.string(forKey: "username"){
+        if let name = standard.string(forKey: "username"),let password = standard.string(forKey: "password"){
            
             showAlert(coordinate: coordinate)
             
@@ -90,17 +91,40 @@ class MapViewController: UIViewController{
             let note = alert?.textFields![0]
             
             self.addNewAnnotation(title: title, note: note?.text ?? "", location: coordinate)
-           
-            //todo fetch server
-            
-            
-        }))
         
+
+        }))
         alert.addAction(UIAlertAction(title:"Cancel",style:.cancel))
         self.present(alert, animated: true, completion: nil)
     }
     
    
+    func createNote(name:String,note:String,location:CLLocationCoordinate2D){
+        
+        let param = ["latitude":location.latitude,"longitude":location.latitude,"user_name":name,"note":note] as [String : AnyObject]
+        
+        Kumulos.call("addNewLocation", parameters:param).success { (response, operation) in
+            print("success add location")
+            }.failure { (error, opertion) in
+                print("error:\(error)")
+        }
+    
+    }
+    
+    func listLocations(){
+        
+        Kumulos.call("listLocations", parameters: [:]).success { (response, operation) in
+            print("listLocatos")
+            }.failure { (error, opertion) in
+                print("error:\(error)")
+        }
+    }
+    
+    
+    
+    
+    
+    
     func addNewAnnotation(title:String,note:String,location:CLLocationCoordinate2D){
         
         newAnnotation = MKPointAnnotation()
@@ -112,6 +136,7 @@ class MapViewController: UIViewController{
         newAnnotationView.tintColor = UIColor.yellow
         mapView.addAnnotation(newAnnotationView.annotation!)
         
+        self.createNote(name: title, note: note, location: location)
     }
     
 }
