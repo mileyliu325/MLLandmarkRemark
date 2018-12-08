@@ -15,14 +15,9 @@ class MapViewController: UIViewController{
     @IBOutlet weak var mapView: MKMapView!
     let locationManager = CLLocationManager()
     var userLocation = CLLocation()
-    
     var newAnnotation : MKPointAnnotation!
     var newAnnotationView : MKPinAnnotationView!
     
-    lazy var geoCoder: CLGeocoder = {
-        return CLGeocoder()
-    }()
-
     override func viewDidLoad() {
         super.viewDidLoad()
         setupMap()
@@ -96,10 +91,9 @@ extension MapViewController:CLLocationManagerDelegate{
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         let location = locations.last! as CLLocation
-        self.userLocation = location
-        
+        self.userLocation = location        
         self.mapView.showsUserLocation = true
-//        let annotation = MKPointAnnotation()
+
         let centerCoordinate = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude:location.coordinate.longitude)
         
         let viewRegion = MKCoordinateRegionMakeWithDistance(centerCoordinate, 500, 500)

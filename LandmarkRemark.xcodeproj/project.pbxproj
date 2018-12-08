@@ -114,11 +114,11 @@
 			isa = PBXGroup;
 			children = (
 				6BDDDE1F21B9F0C0009A4B84 /* AppDelegate.swift */,
+				162F353721BA21B30001EAB0 /* MapViewController.swift */,
 				6BDDDE2321B9F0C0009A4B84 /* Main.storyboard */,
 				6BDDDE2621B9F0C0009A4B84 /* Assets.xcassets */,
 				6BDDDE2821B9F0C0009A4B84 /* LaunchScreen.storyboard */,
 				6BDDDE2B21B9F0C0009A4B84 /* Info.plist */,
-				162F353721BA21B30001EAB0 /* MapViewController.swift */,
 			);
 			path = LandmarkRemark;
 			sourceTree = "<group>";
