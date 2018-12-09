@@ -91,10 +91,10 @@ class MapViewController: UIViewController{
        
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak alert] (_) in
             let title = self.standard.string(forKey: "username")!
-            let note = alert?.textFields![0]
+            let note = alert?.textFields![0].text
             
-            self.addNewAnnotation(title: title, note: note?.text ?? "", location: coordinate)
-        
+            self.addNewAnnotation(title: title, note: note ?? "", location: coordinate)
+            self.createNote(name: title, note: note!, location: coordinate)
 
         }))
         alert.addAction(UIAlertAction(title:"Cancel",style:.cancel))
@@ -104,7 +104,8 @@ class MapViewController: UIViewController{
    
     func createNote(name:String,note:String,location:CLLocationCoordinate2D){
         
-        let param = ["latitude":location.latitude,"longitude":location.latitude,"user_name":name,"note":note] as [String : AnyObject]
+        let param = ["latitude":location.latitude,"longitude":location.longitude
+            ,"user_name":name,"note":note] as [String : AnyObject]
         
         RequestManager.init(APIName: CREAT_NOTE_API, parameter: param).requestOne { (response, error) in
             guard error == nil else {
@@ -123,17 +124,34 @@ class MapViewController: UIViewController{
                 print("error:\(error)")
                 return
             }
-            for location in array! {
-                print("location:\(location)")
-                // todo Serilize
-                //todo add markers
-            }
             
-            
-            
-            
+            self.listAllAnnotation(array:array)
             
         }
+    }
+    
+    func listAllAnnotation(array:Array<AnyObject>?) {
+        
+        var anntationArray = [MKPointAnnotation]()
+        
+        for location in array! {
+            
+            let locationData = Location.init(with: location as! [String : Any])
+            let marker = MKPointAnnotation()
+            marker.title = locationData.user_name
+            marker.subtitle = locationData.note
+            
+            marker.coordinate = CLLocationCoordinate2D.init(latitude: CLLocationDegrees(locationData.latitude), longitude: CLLocationDegrees(locationData.longitude))
+            let markerView : MKPinAnnotationView = MKPinAnnotationView(annotation: marker, reuseIdentifier: "pin")
+            
+            anntationArray.append(markerView.annotation as! MKPointAnnotation)
+            
+        }
+        
+        print("anntation:\(anntationArray)")
+        self.mapView.addAnnotations(anntationArray)
+    
+        
     }
     
     func addNewAnnotation(title:String,note:String,location:CLLocationCoordinate2D){
@@ -142,12 +160,12 @@ class MapViewController: UIViewController{
         newAnnotation.coordinate = location
         newAnnotation.title = title
         newAnnotation.subtitle = note
-        
+        print("newAnnotation")
         newAnnotationView = MKPinAnnotationView(annotation: newAnnotation, reuseIdentifier: "pin")
         newAnnotationView.tintColor = UIColor.yellow
         mapView.addAnnotation(newAnnotationView.annotation!)
-        
-        self.createNote(name: title, note: note, location: location)
+        print("newAnnotation1")
+
     }
     
 }
@@ -168,18 +186,18 @@ extension MapViewController:CLLocationManagerDelegate{
         self.mapView.isZoomEnabled = true
     }
     
-    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
-        let reuseIdentifier = "pin"
-        var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseIdentifier)
-        
-        if annotationView == nil {
-            annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: reuseIdentifier)
-            annotationView?.canShowCallout = true
-        } else {
-            annotationView?.annotation = annotation
-        }
-        
-        return annotationView
-    }
+//    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
+//        let reuseIdentifier = "pin"
+//        var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseIdentifier)
+//
+//        if annotationView == nil {
+//            annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: reuseIdentifier)
+//            annotationView?.canShowCallout = true
+//        } else {
+//            annotationView?.annotation = annotation
+//        }
+//
+//        return annotationView
+//    }
     
 }

@@ -14,6 +14,8 @@
 		162F357E21BC08F60001EAB0 /* UserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162F357D21BC08F60001EAB0 /* UserViewController.swift */; };
 		162F358021BC8FCB0001EAB0 /* RequestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162F357F21BC8FCB0001EAB0 /* RequestManager.swift */; };
 		162F358321BC904E0001EAB0 /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162F358221BC904E0001EAB0 /* API.swift */; };
+		162F358521BCD8E80001EAB0 /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162F358421BCD8E80001EAB0 /* Location.swift */; };
+		162F358721BD24620001EAB0 /* AddLocationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162F358621BD24620001EAB0 /* AddLocationViewModel.swift */; };
 		6BDDDE2021B9F0C0009A4B84 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BDDDE1F21B9F0C0009A4B84 /* AppDelegate.swift */; };
 		6BDDDE2521B9F0C0009A4B84 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6BDDDE2321B9F0C0009A4B84 /* Main.storyboard */; };
 		6BDDDE2721B9F0C0009A4B84 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6BDDDE2621B9F0C0009A4B84 /* Assets.xcassets */; };
@@ -50,6 +52,8 @@
 		162F357D21BC08F60001EAB0 /* UserViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserViewController.swift; sourceTree = "<group>"; };
 		162F357F21BC8FCB0001EAB0 /* RequestManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestManager.swift; sourceTree = "<group>"; };
 		162F358221BC904E0001EAB0 /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
+		162F358421BCD8E80001EAB0 /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
+		162F358621BD24620001EAB0 /* AddLocationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddLocationViewModel.swift; sourceTree = "<group>"; };
 		2107CDE9560481FA697EDD43 /* Pods-LandmarkRemarkUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LandmarkRemarkUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-LandmarkRemarkUITests/Pods-LandmarkRemarkUITests.release.xcconfig"; sourceTree = "<group>"; };
 		301B58B11D2F94D3F795BEA1 /* Pods-LandmarkRemark.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LandmarkRemark.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LandmarkRemark/Pods-LandmarkRemark.debug.xcconfig"; sourceTree = "<group>"; };
 		391779AD5C83AFC28D11B396 /* Pods-LandmarkRemarkTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LandmarkRemarkTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LandmarkRemarkTests/Pods-LandmarkRemarkTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -155,6 +159,8 @@
 				6BDDDE2821B9F0C0009A4B84 /* LaunchScreen.storyboard */,
 				6BDDDE2B21B9F0C0009A4B84 /* Info.plist */,
 				162F358121BC90370001EAB0 /* Networking */,
+				162F358421BCD8E80001EAB0 /* Location.swift */,
+				162F358621BD24620001EAB0 /* AddLocationViewModel.swift */,
 			);
 			path = LandmarkRemark;
 			sourceTree = "<group>";
@@ -427,6 +433,8 @@
 				162F357E21BC08F60001EAB0 /* UserViewController.swift in Sources */,
 				6BDDDE2021B9F0C0009A4B84 /* AppDelegate.swift in Sources */,
 				162F358021BC8FCB0001EAB0 /* RequestManager.swift in Sources */,
+				162F358521BCD8E80001EAB0 /* Location.swift in Sources */,
+				162F358721BD24620001EAB0 /* AddLocationViewModel.swift in Sources */,
 				162F358321BC904E0001EAB0 /* API.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

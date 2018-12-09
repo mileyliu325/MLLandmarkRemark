@@ -18,7 +18,6 @@ class UserViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
     }
     
     @IBAction func loginAction(_ sender: Any) {
@@ -44,16 +43,15 @@ class UserViewController: UIViewController {
     
     func checkUserExist(name:String) {
         
-        Kumulos.call(CHECK_EXIST_API, parameters: ["user_name":name as AnyObject])
-            .success { (response, operation) in
-                if let array = response.payload as? Array<AnyObject> {
-                print("it's an array of objects, counts:\(array.count)")
-                self.register(name: self.loginNameTF.text!, password: self.loginPswTF.text!)
-            }else {
-                print("this account have been registered,please use another name")}
-                
-            }.failure { (error, operation) in
+        let param = ["user_name":name] as [String:AnyObject]
+        
+        RequestManager.init(APIName: CHECK_EXIST_API, parameter: param).requestMany { (array, error) in
+            guard error == nil else {
                 print("check existing error:\(error)")
+                return
+            }
+            print(" checkUserExist:\(array?.count)")
+            self.register(name: self.loginNameTF.text!, password: self.loginPswTF.text!)
         }
     }
     

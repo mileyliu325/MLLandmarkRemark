@@ -23,10 +23,10 @@ class RequestManager{
     
     func requestOne(completion:@escaping CompletionHandler) {
         
+     
         Kumulos.call(self.APIName, parameters: param).success { (response, operation) in
             
             guard response.payload != nil else{
-                
                 completion(nil,nil)
                 return
             }
