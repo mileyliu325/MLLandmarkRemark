@@ -30,6 +30,7 @@ class RequestManager{
                 completion(nil,nil)
                 return
             }
+            print("whole respnse:\(response.responseCode)\(response.responseMessage)")
             completion(response,nil)
             }.failure { (error, opertion) in
             completion(nil,error)
@@ -39,7 +40,7 @@ class RequestManager{
     func requestMany(completion:@escaping CompletionHandler_2){
        
         Kumulos.call(self.APIName, parameters: param).success { (response, operation) in
-            
+             print("many whole respnse:\(response.responseCode)\(response.responseMessage)")
             if let array = response.payload as? Array<AnyObject>{
                 completion(array,nil)
             }else{

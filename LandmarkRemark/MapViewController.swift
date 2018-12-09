@@ -11,6 +11,8 @@ import CoreLocation
 import MapKit
 import KumulosSDK
 
+
+
 class MapViewController: UIViewController{
 
     @IBOutlet weak var mapView: MKMapView!
@@ -20,11 +22,14 @@ class MapViewController: UIViewController{
     var newAnnotationView : MKPinAnnotationView!
     var standard = UserDefaults.standard
     
+    var serachedLocation: CLLocationCoordinate2D?
+   
     @IBOutlet weak var logoutButton: UIBarButtonItem!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupMap()
+        
         
         let longTap = UILongPressGestureRecognizer.init(target: self, action: #selector(handleTap(sender:)))
         
@@ -41,11 +46,53 @@ class MapViewController: UIViewController{
         }
     }
     
+    @IBAction func searchTaped(_ sender: Any) {
+        
+        var controller: SearchViewController
+        
+        controller = self.storyboard?.instantiateViewController(withIdentifier: "SearchViewController") as! SearchViewController
+        
+        
+       controller.delegate = self
+        
+        present(controller, animated: true, completion: nil)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+       
+        if let name = standard.string(forKey: "username") , let password = standard.string(forKey: "password"){
+            
+            logoutButton.isEnabled = true
+            listLocations()
+            
+        }else{
+            
+            logoutButton.isEnabled = false
+        }
+        
+    }
+    
+ 
     @IBAction func logout(_ sender: Any) {
         
-        //todo alert
-        standard.removeObject(forKey: "username")
-        standard.removeObject(forKey: "password")
+        
+        
+        let alert = UIAlertController(title: "LOGOUT", message: "Do you want to logout", preferredStyle: .alert)
+        
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak alert] (_) in
+           
+            self.standard.removeObject(forKey: "username")
+            self.standard.removeObject(forKey: "password")
+            self.logoutButton.isEnabled = false
+           
+            let allAnnotations = self.mapView.annotations
+            self.mapView.removeAnnotations(allAnnotations)
+            
+        }))
+        alert.addAction(UIAlertAction(title:"Cancel",style:.cancel))
+        self.present(alert, animated: true, completion: nil)
+        
+        
         
     }
     @objc func handleTap(sender: UILongPressGestureRecognizer) {
@@ -62,8 +109,10 @@ class MapViewController: UIViewController{
             var controller: UserViewController
             
             controller = self.storyboard?.instantiateViewController(withIdentifier: "UserViewController") as! UserViewController
+           self.navigationController?.pushViewController(controller, animated: true)
             
-            present(controller, animated: true, completion: nil)
+            
+//            present(controller, animated: true, completion: nil)
         }
     }
     
@@ -92,10 +141,11 @@ class MapViewController: UIViewController{
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak alert] (_) in
             let title = self.standard.string(forKey: "username")!
             let note = alert?.textFields![0].text
-            
-            self.addNewAnnotation(title: title, note: note ?? "", location: coordinate)
-            self.createNote(name: title, note: note!, location: coordinate)
-
+        
+            if let note = note {
+                self.addNewAnnotation(title: title, note: note, location: coordinate)
+                self.createNote(name: title, note: note, location: coordinate)
+            }
         }))
         alert.addAction(UIAlertAction(title:"Cancel",style:.cancel))
         self.present(alert, animated: true, completion: nil)
@@ -112,9 +162,16 @@ class MapViewController: UIViewController{
               print("error:\(error?.localizedDescription)")
                 return
             }
+            
+            
+//            let myLocation = Location.init(with: param)
+            
+//            locations.append(Location)÷
             print("success add location")
         }
     }
+    
+  
     
     func listLocations(){
         
@@ -125,34 +182,20 @@ class MapViewController: UIViewController{
                 return
             }
             
-            self.listAllAnnotation(array:array)
+            for location in array! {
+                
+                
+                let locationData = Location.init(with: location as! [String : Any])
+                let coordinate = CLLocationCoordinate2D.init(latitude: CLLocationDegrees(locationData.latitude), longitude: CLLocationDegrees(locationData.longitude))
+                
+//                self.locations.append(locationData)
+                self.addNewAnnotation(title: locationData.user_name, note: locationData.note, location: coordinate)
+
+            }
             
         }
     }
     
-    func listAllAnnotation(array:Array<AnyObject>?) {
-        
-        var anntationArray = [MKPointAnnotation]()
-        
-        for location in array! {
-            
-            let locationData = Location.init(with: location as! [String : Any])
-            let marker = MKPointAnnotation()
-            marker.title = locationData.user_name
-            marker.subtitle = locationData.note
-            
-            marker.coordinate = CLLocationCoordinate2D.init(latitude: CLLocationDegrees(locationData.latitude), longitude: CLLocationDegrees(locationData.longitude))
-            let markerView : MKPinAnnotationView = MKPinAnnotationView(annotation: marker, reuseIdentifier: "pin")
-            
-            anntationArray.append(markerView.annotation as! MKPointAnnotation)
-            
-        }
-        
-        print("anntation:\(anntationArray)")
-        self.mapView.addAnnotations(anntationArray)
-    
-        
-    }
     
     func addNewAnnotation(title:String,note:String,location:CLLocationCoordinate2D){
         
@@ -160,19 +203,18 @@ class MapViewController: UIViewController{
         newAnnotation.coordinate = location
         newAnnotation.title = title
         newAnnotation.subtitle = note
-        print("newAnnotation")
+      
         newAnnotationView = MKPinAnnotationView(annotation: newAnnotation, reuseIdentifier: "pin")
         newAnnotationView.tintColor = UIColor.yellow
         mapView.addAnnotation(newAnnotationView.annotation!)
-        print("newAnnotation1")
-
     }
     
 }
 
-extension MapViewController:CLLocationManagerDelegate{
+extension MapViewController:CLLocationManagerDelegate,SearchControllerDelegate{
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+   
         let location = locations.last! as CLLocation
         self.userLocation = location
         self.mapView.showsUserLocation = true
@@ -186,18 +228,21 @@ extension MapViewController:CLLocationManagerDelegate{
         self.mapView.isZoomEnabled = true
     }
     
-//    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
-//        let reuseIdentifier = "pin"
-//        var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseIdentifier)
-//
-//        if annotationView == nil {
-//            annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: reuseIdentifier)
-//            annotationView?.canShowCallout = true
-//        } else {
-//            annotationView?.annotation = annotation
-//        }
-//
-//        return annotationView
-//    }
+    func findLocation(coordinate:CLLocationCoordinate2D){
+        
+        print("searchedLocation:\(coordinate.latitude),\(coordinate.longitude)")
+        //set camera
+        let centerCoordinate = coordinate
+        
+        let viewRegion = MKCoordinateRegionMakeWithDistance(centerCoordinate, 500, 500)
+        let adjustRegion = self.mapView.regionThatFits(viewRegion)
+        self.mapView.setRegion(adjustRegion, animated: true)
+        self.mapView.showsUserLocation = true
+        self.mapView.isZoomEnabled = true
+        
+        
+    }
+    
+
     
 }

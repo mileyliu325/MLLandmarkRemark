@@ -76,6 +76,8 @@ class UserViewController: UIViewController {
         let param = ["user_name":name,"password":password] as [String:AnyObject]
         RequestManager.init(APIName: LOGIN_API, parameter: param).requestOne { (response, error) in
            
+            print(response.debugDescription)
+            
             guard error == nil else {
                 print("login error:\(error?.localizedDescription)")
                 return
