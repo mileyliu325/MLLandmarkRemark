@@ -29,9 +29,12 @@ class MapViewController: UIViewController{
         let longTap = UILongPressGestureRecognizer.init(target: self, action: #selector(handleTap(sender:)))
         
         self.mapView.addGestureRecognizer(longTap)
+        
         if let name = standard.string(forKey: "username") {
             
             logoutButton.isEnabled = true
+            listLocations()
+            
         }else{
            
             logoutButton.isEnabled = false
@@ -103,27 +106,35 @@ class MapViewController: UIViewController{
         
         let param = ["latitude":location.latitude,"longitude":location.latitude,"user_name":name,"note":note] as [String : AnyObject]
         
-        Kumulos.call("addNewLocation", parameters:param).success { (response, operation) in
+        RequestManager.init(APIName: CREAT_NOTE_API, parameter: param).requestOne { (response, error) in
+            guard error == nil else {
+              print("error:\(error?.localizedDescription)")
+                return
+            }
             print("success add location")
-            }.failure { (error, opertion) in
-                print("error:\(error)")
         }
-    
     }
     
     func listLocations(){
         
-        Kumulos.call("listLocations", parameters: [:]).success { (response, operation) in
-            print("listLocatos")
-            }.failure { (error, opertion) in
+        RequestManager.init(APIName: LIST_ALL_API, parameter: [:]).requestMany { (array, error) in
+            
+            guard error == nil, array!.count > 0 else{
                 print("error:\(error)")
+                return
+            }
+            for location in array! {
+                print("location:\(location)")
+                // todo Serilize
+                //todo add markers
+            }
+            
+            
+            
+            
+            
         }
     }
-    
-    
-    
-    
-    
     
     func addNewAnnotation(title:String,note:String,location:CLLocationCoordinate2D){
         

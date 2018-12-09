@@ -44,7 +44,7 @@ class UserViewController: UIViewController {
     
     func checkUserExist(name:String) {
         
-        Kumulos.call("checkUserExist", parameters: ["user_name":name as AnyObject])
+        Kumulos.call(CHECK_EXIST_API, parameters: ["user_name":name as AnyObject])
             .success { (response, operation) in
                 if let array = response.payload as? Array<AnyObject> {
                 print("it's an array of objects, counts:\(array.count)")
@@ -59,30 +59,36 @@ class UserViewController: UIViewController {
     
     func register(name:String,password:String){
         
-        Kumulos.call("reigster", parameters: ["user_name":name as AnyObject,"password":name as AnyObject]).success { (response, operation) in
-            print("register sucess:\(response.payload)")
-           
+        
+        
+        let param = ["user_name":name,"password":password] as [String:AnyObject]
+        RequestManager.init(APIName: REGISTER_API, parameter: param).requestOne { (response, error) in
+            
+            guard error == nil else {
+                print("REGISTER error:\(error?.localizedDescription)")
+                return
+            }
             self.login(name:name, password: password)
-           
-            }.failure { (error, operation) in
-                print("registereroro:\(error)")
+            self.dismiss(animated: true, completion: nil)
         }
     }
     
     func login(name:String,password:String) {
         
-        Kumulos.call("login", parameters: ["user_name":name as AnyObject,"password":name as AnyObject]).success { (response, operation) in
-            print("login sucess:\(response.payload)")
+        let param = ["user_name":name,"password":password] as [String:AnyObject]
+        RequestManager.init(APIName: LOGIN_API, parameter: param).requestOne { (response, error) in
+           
+            guard error == nil else {
+                print("login error:\(error?.localizedDescription)")
+                return
+            }
             
             self.standard.set(name, forKey: "username")
             self.standard.set(password, forKey: "password")
             
             self.dismiss(animated: true, completion: nil)
             
-            }.failure { (error, operation) in
-                print("login error:\(error)")
         }
-        
        
     }
     

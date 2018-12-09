@@ -17,7 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
-        let builder = KSConfigBuilder(apiKey: "e3a9e964-b668-44d0-a6f1-ac37e98ce05f", secretKey: "dEwcPgcyrsuYJz02MAdziDRcDIfblmJBvFft")
+        let builder = KSConfigBuilder(apiKey: APIKEY, secretKey:SECRET )
         Kumulos.initialize(config: builder.build())
      
         return true
