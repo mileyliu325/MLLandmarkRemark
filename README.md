@@ -26,3 +26,6 @@ Backend build by Kumulos, require to install CocoaPods and install Kumulos SDK
 * Xcode 10.1 (Xcode 8 compatible)
 * iOS Deployment target 10.0
 * Simulator iPhone 7
+
+## ScreenShots
+[Google Drive Link](https://drive.google.com/open?id=1XVPLNdIXwJ57IKVSmdmx8ujvgzg3Ac3N)
