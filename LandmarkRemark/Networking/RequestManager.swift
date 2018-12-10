@@ -23,24 +23,24 @@ class RequestManager{
     
     func requestOne(completion:@escaping CompletionHandler) {
         
-     
         Kumulos.call(self.APIName, parameters: param).success { (response, operation) in
             
             guard response.payload != nil else{
                 completion(nil,nil)
                 return
             }
-            print("whole respnse:\(response.responseCode)\(response.responseMessage)")
+            
             completion(response,nil)
             }.failure { (error, opertion) in
-            completion(nil,error)
+                
+                completion(nil,error)
         }
     }
     
     func requestMany(completion:@escaping CompletionHandler_2){
-       
+        
         Kumulos.call(self.APIName, parameters: param).success { (response, operation) in
-             print("many whole respnse:\(response.responseCode)\(response.responseMessage)")
+            
             if let array = response.payload as? Array<AnyObject>{
                 completion(array,nil)
             }else{
@@ -50,9 +50,7 @@ class RequestManager{
             }.failure { (error, opertion) in
                 completion(nil,error)
         }
-        
     }
-    
 }
 
 

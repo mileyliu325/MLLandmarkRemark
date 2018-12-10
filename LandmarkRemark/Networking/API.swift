@@ -13,7 +13,7 @@ let SECRET = "dEwcPgcyrsuYJz02MAdziDRcDIfblmJBvFft"
 
 let LOGIN_API = "login"
 let CHECK_EXIST_API = "checkUserExist"
-let REGISTER_API = "reigster"
+let REGISTER_API = "register"
 
 let CREAT_NOTE_API = "addNewLocation"
 let LIST_ALL_API = "listLocations"

@@ -8,15 +8,12 @@
 
 import UIKit
 import CoreLocation
-
+//send back location coordinate to show in map
 protocol SearchControllerDelegate {
     func findLocation(coordinate:CLLocationCoordinate2D)
 }
-
 class SearchViewController: UIViewController, UISearchBarDelegate,UITableViewDelegate,UITableViewDataSource{
-
     var delegate:SearchControllerDelegate?
-
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var resultTableView: UITableView!
     
@@ -26,18 +23,23 @@ class SearchViewController: UIViewController, UISearchBarDelegate,UITableViewDel
     lazy var geoCoder: CLGeocoder = {
         return CLGeocoder()
     }()
- 
+    
     var isSearch = false//default
+    //MARK: - IBAction
+    @IBAction func closePage(_ sender: Any) {
+        
+        self.dismiss(animated: true, completion: nil)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-    
+        
         resultTableView.delegate = self
         resultTableView.dataSource = self
-    
+        
         searchBar.showsCancelButton = true
         searchBar.delegate = self
-    
+        
         listLocations()
     }
     
@@ -46,99 +48,75 @@ class SearchViewController: UIViewController, UISearchBarDelegate,UITableViewDel
         RequestManager.init(APIName: LIST_ALL_API, parameter: [:]).requestMany { (array, error) in
             
             guard error == nil, array!.count > 0 else{
-                print("error:\(error)")
+                
+              let alert =  getErrorAlert(error: error)
+                self.present(alert, animated: true, completion: nil)
                 return
             }
-            
             for location in array! {
-                
                 let locationData = Location.init(with: location as! [String : Any])
                 self.locations.append(locationData)
-//                self.dataSource.add(location)
-                
             }
             self.resultTableView.reloadData()
         }
     }
     
+    //MARK: UITableviewDelegate
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-       
+        
         if isSearch{
             return self.results.count
         }
         else {return self.locations.count}
     }
     
-    @IBAction func closePage(_ sender: Any) {
-        
-        self.dismiss(animated: true, completion: nil)
-    }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
+        let cell = tableView.dequeueReusableCell(withIdentifier: "resultCell", for: indexPath) as! ResultTableViewCell
         
-         let cell = tableView.dequeueReusableCell(withIdentifier: "resultCell", for: indexPath) as! ResultTableViewCell
+        var loc :Location?
+       
         if isSearch {
-           
-            let loc = results[indexPath.row]
-           cell.nameLabel.text? = loc.user_name
-            cell.noteLabel.text? = loc.note
-           
-            let location = CLLocation(latitude: CLLocationDegrees(loc.latitude), longitude: CLLocationDegrees(loc.longitude))
-            
-            geoCoder.reverseGeocodeLocation(location) { (pls: [CLPlacemark]?, error: Error?) -> Void in
-                if error == nil {
-                let pl = pls?.first
-                
-                cell.placeLabel.text = "\(pl?.locality ?? "")+\(pl?.name ?? "")"
-                    print("locality:\(pl?.locality)")
-                    print("name:\(pl?.name)")
-                }
-            else {print("geocoder\(error)")}
-            }
-            
+            loc = results[indexPath.row]
         }
         else{
-            let loc = locations[indexPath.row]
-            cell.nameLabel.text? = loc.user_name
-            cell.noteLabel.text? = loc.note
-            let location = CLLocation(latitude: CLLocationDegrees(loc.latitude), longitude: CLLocationDegrees(loc.longitude))
-            
-            geoCoder.reverseGeocodeLocation(location) { (pls: [CLPlacemark]?, error: Error?) -> Void in
-                if error == nil {
-                    let pl = pls?.first
-                  
-                    print("locality:\(pl?.locality)")
-                    print("name:\(pl?.name)")
-                    cell.placeLabel.text = "\(pl?.locality ?? "Untrackable"),\(pl?.name ?? "Untrackable")"
+            loc = locations[indexPath.row]
+
+        }
+        cell.nameLabel.text = loc?.user_name
+        cell.noteLabel.text = loc?.note
+        
+        let location = CLLocation(latitude: CLLocationDegrees((loc?.latitude)!), longitude: CLLocationDegrees(loc!.longitude))
+        
+        geoCoder.reverseGeocodeLocation(location) { (pls: [CLPlacemark]?, error: Error?) -> Void in
+            if error == nil {
+                let pl = pls?.first
                 
-                }
-                else {print("geocoder\(error)")}
+                cell.placeLabel.text = "\(pl?.locality ?? ""),\(pl?.name ?? "")"
             }
+            else {print("geocoder:\(error.debugDescription)")}
         }
         
-       
         return cell
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 130
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-     
+        
+        var loc :Location?
+        
         if isSearch {
-            let loc = results[indexPath.row]
-            let coordinate = CLLocationCoordinate2DMake(CLLocationDegrees(loc.latitude), CLLocationDegrees(loc.longitude))
-            self.dismiss(animated: true) {
-              self.delegate?.findLocation(coordinate: coordinate)
-            }
+            loc = results[indexPath.row]
+            
         }
         else{
-            let loc = locations[indexPath.row]
-            let coordinate = CLLocationCoordinate2DMake(CLLocationDegrees(loc.latitude), CLLocationDegrees(loc.longitude))
-            
-            self.dismiss(animated: true) {
-                self.delegate?.findLocation(coordinate: coordinate)
-                
-            }
+            loc = locations[indexPath.row]
+
+        }
+        let coordinate = CLLocationCoordinate2DMake(CLLocationDegrees((loc?.latitude)!), CLLocationDegrees(loc!.longitude))
+        self.dismiss(animated: true) {
+            self.delegate?.findLocation(coordinate: coordinate)
         }
     }
     
@@ -151,18 +129,16 @@ class SearchViewController: UIViewController, UISearchBarDelegate,UITableViewDel
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         
         if searchText == "" {
-             isSearch = false
-            
+            isSearch = false
         } else {
             print(searchText)
         }
-        
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         
         if let searchText = searchBar.text {
-           
+            
             isSearch = true
             request(keyword: searchText)
             self.resultTableView.reloadData()
@@ -170,29 +146,25 @@ class SearchViewController: UIViewController, UISearchBarDelegate,UITableViewDel
         
         self.searchBar.resignFirstResponder()
     }
-    
-   
-    
+
+    //MARK: NETWORKING
     func request(keyword:String){
         let param = ["searchNote":keyword] as [String:AnyObject]
         RequestManager.init(APIName: SEARCH_API, parameter: param).requestMany { (array, error) in
-           
-            guard error == nil, array!.count > 0 else{
-               self.resultTableView.reloadData()
             
+            guard error == nil, array!.count > 0 else{
+                self.resultTableView.reloadData()
                 return
             }
-//            self.resultArray = NSMutableArray()
+            
             self.results = [Location]()
-            print("array:\(array!.count)")
+
             for loc in array! {
                 let locationData = Location.init(with: loc as! [String : Any])
-
+                
                 self.results.append(locationData)
-//                self.resultArray.add(loc)
-
             }
-             self.resultTableView.reloadData()
+            self.resultTableView.reloadData()
         }
     }
 }
