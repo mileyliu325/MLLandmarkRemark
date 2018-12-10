@@ -81,8 +81,8 @@ class UserViewController: UIViewController {
             
             print(response.debugDescription)
             
-            guard error == nil else {
-                
+            guard error == nil, response != nil else {
+            
                 let alert = getErrorAlert(error: error)
                 self.present(alert, animated: true, completion: nil)
                 

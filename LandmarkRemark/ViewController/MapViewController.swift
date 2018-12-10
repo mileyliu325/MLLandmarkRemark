@@ -45,6 +45,7 @@ class MapViewController: UIViewController{
             listLocations()
             
         }else{
+            self.title = "Hello"
             logoutButton.isEnabled = false
         }
     }
@@ -58,6 +59,7 @@ class MapViewController: UIViewController{
             listLocations()
             
         }else{
+            self.title = "Hello"
             logoutButton.isEnabled = false
         }
     }
@@ -72,22 +74,32 @@ class MapViewController: UIViewController{
             showCreateNoteAlert(coordinate: userLocation.coordinate)
             
         }else {
-            //go to login page if username not found
-            var controller: UserViewController
-            controller = self.storyboard?.instantiateViewController(withIdentifier: "UserViewController") as! UserViewController
-            
-            present(controller, animated: true, completion: nil)
+               gotoLoginPage()
         }
+    }
+    
+    func gotoLoginPage() {
+        
+        var controller: UserViewController
+        controller = self.storyboard?.instantiateViewController(withIdentifier: "UserViewController") as! UserViewController
+        
+        present(controller, animated: true, completion: nil)
     }
     
     @IBAction func searchTaped(_ sender: Any) {
         
-        var controller: SearchViewController
+        if checkIfLogin(){
+           
+            var controller: SearchViewController
+            controller = self.storyboard?.instantiateViewController(withIdentifier: "SearchViewController") as! SearchViewController
+            //usage for show search location
+            controller.delegate = self
+            present(controller, animated: true, completion: nil)
+        }
+        else {
+            gotoLoginPage()
+        }
         
-        controller = self.storyboard?.instantiateViewController(withIdentifier: "SearchViewController") as! SearchViewController
-        //usage for show search location
-        controller.delegate = self
-        present(controller, animated: true, completion: nil)
     }
     
     @IBAction func logout(_ sender: Any) {
@@ -97,11 +109,14 @@ class MapViewController: UIViewController{
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
             
             userdefaultLogout()
+            
             self.logoutButton.isEnabled = false
+            self.title = "Hello"
             
             //remove all annotations
             let allAnnotations = self.mapView.annotations
             self.mapView.removeAnnotations(allAnnotations)
+            
             
         }))
         
@@ -185,11 +200,18 @@ class MapViewController: UIViewController{
         
         RequestManager.init(APIName: LIST_ALL_API, parameter: [:]).requestMany { (array, error) in
             
-            guard error == nil, array!.count > 0 else{
+            guard error == nil else{
                 
                 let alert =  getErrorAlert(error: error)
                 self.present(alert, animated: true, completion: nil)
                 return
+            }
+            
+            guard array != nil else {
+                 let alert =  getSimpleAlert(title: "Error", message: "Can't fetch notes, please check your internet")
+                self.present(alert, animated: true, completion: nil)
+                return
+                
             }
             
             for location in array! {
@@ -235,8 +257,6 @@ extension MapViewController:CLLocationManagerDelegate,SearchControllerDelegate{
     
     //function from searchviewcontroller ,find the location requested
     func findLocation(coordinate:CLLocationCoordinate2D){
-        
-        print("searchedLocation:\(coordinate.latitude),\(coordinate.longitude)")
         //set camera
         let centerCoordinate = coordinate
         

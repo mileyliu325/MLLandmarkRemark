@@ -25,6 +25,8 @@ class RequestManager{
         
         Kumulos.call(self.APIName, parameters: param).success { (response, operation) in
             
+            print("response:\(response.responseCode)")
+            
             guard response.payload != nil else{
                 completion(nil,nil)
                 return
@@ -41,7 +43,7 @@ class RequestManager{
         
         Kumulos.call(self.APIName, parameters: param).success { (response, operation) in
             
-            if let array = response.payload as? Array<AnyObject>{
+            if let array = response.payload as? Array<AnyObject>, array != nil {
                 completion(array,nil)
             }else{
                 completion(nil,nil)
