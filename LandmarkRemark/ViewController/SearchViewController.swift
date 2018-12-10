@@ -19,12 +19,14 @@ class SearchViewController: UIViewController, UISearchBarDelegate,UITableViewDel
 
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var resultTableView: UITableView!
-    var dataSource : NSMutableArray = NSMutableArray()
-    var resultArray :NSMutableArray = NSMutableArray()
+    
     var locations = [Location]()
     var results = [Location]()
-  
-//    var selectedLocations = Location()
+    
+    lazy var geoCoder: CLGeocoder = {
+        return CLGeocoder()
+    }()
+ 
     var isSearch = false//default
     
     override func viewDidLoad() {
@@ -52,7 +54,7 @@ class SearchViewController: UIViewController, UISearchBarDelegate,UITableViewDel
                 
                 let locationData = Location.init(with: location as! [String : Any])
                 self.locations.append(locationData)
-                self.dataSource.add(location)
+//                self.dataSource.add(location)
                 
             }
             self.resultTableView.reloadData()
@@ -62,39 +64,70 @@ class SearchViewController: UIViewController, UISearchBarDelegate,UITableViewDel
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
        
         if isSearch{
-            return self.resultArray.count
+            return self.results.count
         }
-        else {return self.dataSource.count}
+        else {return self.locations.count}
     }
     
+    @IBAction func closePage(_ sender: Any) {
+        
+        self.dismiss(animated: true, completion: nil)
+    }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         
-         let cell = tableView.dequeueReusableCell(withIdentifier: "resultCell", for: indexPath)
+         let cell = tableView.dequeueReusableCell(withIdentifier: "resultCell", for: indexPath) as! ResultTableViewCell
         if isSearch {
+           
             let loc = results[indexPath.row]
-            cell.textLabel?.text = loc.user_name
-            cell.detailTextLabel?.text = loc.note
+           cell.nameLabel.text? = loc.user_name
+            cell.noteLabel.text? = loc.note
+           
+            let location = CLLocation(latitude: CLLocationDegrees(loc.latitude), longitude: CLLocationDegrees(loc.longitude))
+            
+            geoCoder.reverseGeocodeLocation(location) { (pls: [CLPlacemark]?, error: Error?) -> Void in
+                if error == nil {
+                let pl = pls?.first
+                
+                cell.placeLabel.text = "\(pl?.locality ?? "")+\(pl?.name ?? "")"
+                    print("locality:\(pl?.locality)")
+                    print("name:\(pl?.name)")
+                }
+            else {print("geocoder\(error)")}
+            }
+            
         }
         else{
             let loc = locations[indexPath.row]
-            cell.textLabel?.text = loc.user_name
-            cell.detailTextLabel?.text = loc.note
+            cell.nameLabel.text? = loc.user_name
+            cell.noteLabel.text? = loc.note
+            let location = CLLocation(latitude: CLLocationDegrees(loc.latitude), longitude: CLLocationDegrees(loc.longitude))
+            
+            geoCoder.reverseGeocodeLocation(location) { (pls: [CLPlacemark]?, error: Error?) -> Void in
+                if error == nil {
+                    let pl = pls?.first
+                  
+                    print("locality:\(pl?.locality)")
+                    print("name:\(pl?.name)")
+                    cell.placeLabel.text = "\(pl?.locality ?? "Untrackable"),\(pl?.name ?? "Untrackable")"
+                
+                }
+                else {print("geocoder\(error)")}
+            }
         }
         
        
         return cell
     }
-    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 130
+    }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
      
         if isSearch {
             let loc = results[indexPath.row]
             let coordinate = CLLocationCoordinate2DMake(CLLocationDegrees(loc.latitude), CLLocationDegrees(loc.longitude))
             self.dismiss(animated: true) {
-                
-                //todo point to the coordinate
-                
               self.delegate?.findLocation(coordinate: coordinate)
             }
         }
@@ -103,7 +136,6 @@ class SearchViewController: UIViewController, UISearchBarDelegate,UITableViewDel
             let coordinate = CLLocationCoordinate2DMake(CLLocationDegrees(loc.latitude), CLLocationDegrees(loc.longitude))
             
             self.dismiss(animated: true) {
-                   //todo point to the coordinate
                 self.delegate?.findLocation(coordinate: coordinate)
                 
             }
@@ -150,30 +182,17 @@ class SearchViewController: UIViewController, UISearchBarDelegate,UITableViewDel
             
                 return
             }
-            self.resultArray = NSMutableArray()
+//            self.resultArray = NSMutableArray()
             self.results = [Location]()
             print("array:\(array!.count)")
             for loc in array! {
                 let locationData = Location.init(with: loc as! [String : Any])
 
                 self.results.append(locationData)
-                self.resultArray.add(loc)
+//                self.resultArray.add(loc)
 
             }
              self.resultTableView.reloadData()
         }
-       
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

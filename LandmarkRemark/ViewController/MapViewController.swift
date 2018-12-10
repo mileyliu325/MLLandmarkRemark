@@ -16,6 +16,7 @@ import KumulosSDK
 class MapViewController: UIViewController{
 
     @IBOutlet weak var mapView: MKMapView!
+    
     let locationManager = CLLocationManager()
     var userLocation = CLLocation()
     var newAnnotation : MKPointAnnotation!
@@ -24,10 +25,34 @@ class MapViewController: UIViewController{
     
     var serachedLocation: CLLocationCoordinate2D?
    
+    @IBOutlet weak var currentLocationButton: UIButton!
     @IBOutlet weak var logoutButton: UIBarButtonItem!
     
+    @IBAction func AddMyCurrentLocation(_ sender: Any) {
+    
+        
+        if let name = standard.string(forKey: "username"),let password = standard.string(forKey: "password"){
+            
+            showAlert(coordinate: userLocation.coordinate)
+            
+        }else {
+            
+            var controller: UserViewController
+            
+            controller = self.storyboard?.instantiateViewController(withIdentifier: "UserViewController") as! UserViewController
+          
+            present(controller, animated: true, completion: nil)
+            
+        }
+        
+        self.currentLocationButton.layer.cornerRadius = 3
+        
+        
+        
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
+       
         setupMap()
         
         
@@ -109,10 +134,10 @@ class MapViewController: UIViewController{
             var controller: UserViewController
             
             controller = self.storyboard?.instantiateViewController(withIdentifier: "UserViewController") as! UserViewController
-           self.navigationController?.pushViewController(controller, animated: true)
+          
             
+            present(controller, animated: true, completion: nil)
             
-//            present(controller, animated: true, completion: nil)
         }
     }
     
@@ -162,11 +187,6 @@ class MapViewController: UIViewController{
               print("error:\(error?.localizedDescription)")
                 return
             }
-            
-            
-//            let myLocation = Location.init(with: param)
-            
-//            locations.append(Location)÷
             print("success add location")
         }
     }
